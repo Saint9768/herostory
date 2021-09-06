@@ -64,6 +64,17 @@ public class MainMsgProcessor {
     }
 
     /**
+     * 处理 Runnable 实例
+     * @param r
+     */
+    public void process(Runnable r) {
+        if (null == r) {
+            return;
+        }
+        es.submit(r);
+    }
+
+    /**
      * 强转为命令对象
      *
      * @return
