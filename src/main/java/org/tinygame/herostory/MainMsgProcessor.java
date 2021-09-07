@@ -71,7 +71,7 @@ public class MainMsgProcessor {
         if (null == r) {
             return;
         }
-        es.submit(r);
+        es.submit(new SafeRun(r));
     }
 
     /**
@@ -84,5 +84,33 @@ public class MainMsgProcessor {
             return null;
         }
         return (TCmd) msg;
+    }
+
+    /**
+     * 保证某一线程执行异常不会对后续操作产生影响
+     */
+    static private class SafeRun implements Runnable {
+
+        /**
+         * 内置运行实例
+         */
+        private final Runnable innerR;
+
+        private SafeRun(Runnable innerR) {
+            this.innerR = innerR;
+        }
+
+        @Override
+        public void run() {
+            if (null == innerR) {
+                return;
+            }
+            try {
+                // 运行
+                innerR.run();
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage(), e);
+            }
+        }
     }
 }
